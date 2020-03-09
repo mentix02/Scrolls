@@ -1,2 +1,2 @@
-# scrolls
-a simple blogging app with a REST api
+# Scrolls
+A simple blogging app with a REST api.
