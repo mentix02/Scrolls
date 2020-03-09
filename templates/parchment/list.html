@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block home_active %}active{% endblock %}
+{% block body %}
+
+  <!-- Page Content -->
+  <div class="container">
+
+  <div class="row">
+
+    <!-- Blog Entries Column -->
+    <div class="col-md-8">
+
+      <h1 class="my-4">Manan's Scrolls
+        <small class="text-muted">I like to write. So here I am.</small>
+      </h1>
+
+      <!-- Blog Post -->
+      {% for parchment in parchments %}
+        <div class="card mb-4">
+          <div class="card-body">
+            <h2 class="card-title">{{ parchment.title }}</h2>
+            <p class="card-text">{{ parchment.body | truncatewords_html:35 }}</p>
+            <a href="#" class="btn btn-primary">Read More &rarr;</a>
+          </div>
+          <div class="card-footer text-muted">
+            Posted on {{ parchment.timestamp | date }}<br>
+            Tags: {% for tag in parchment.tags.all %}
+              <a href="{% url 'parchment:tag' tag.slug %}">
+                {{ tag | lower }}</a>{% if forloop.last %} {% else %},{% endif %}{% endfor %}
+          </div>
+        </div>
+      {% empty %}
+        <h3 class="text-black-50">You're too early, there's nothing here yet.</h3>
+      {% endfor %}
+      <!-- Pagination -->
+      {% if is_paginated %}
+        <ul class="pagination justify-content-center mb-4">
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+              {% if page_obj.has_previous %}&larr;{% endif %} Newer
+            </a>
+          </li>
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+              Older {% if page_obj.has_next %}&rarr;{% endif %}
+            </a>
+          </li>
+        </ul>
+      {% endif %}
+
+    </div>
+
+    <!-- Sidebar Widgets Column -->
+    <div class="col-md-4">
+
+      <!-- Search Widget -->
+      <div class="card my-4">
+        <h5 class="card-header">Search</h5>
+        <div class="card-body">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for..." autofocus>
+            <span class="input-group-append">
+              <button class="btn btn-success" type="button">Go!</button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories Widget -->
+      <div class="card my-4">
+        <h5 class="card-header">Categories</h5>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <a href="#">Web Design</a>
+                </li>
+                <li>
+                  <a href="#">HTML</a>
+                </li>
+                <li>
+                  <a href="#">Freebies</a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-6">
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <a href="#">JavaScript</a>
+                </li>
+                <li>
+                  <a href="#">CSS</a>
+                </li>
+                <li>
+                  <a href="#">Tutorials</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side Widget -->
+      <div class="card my-4">
+        <h5 class="card-header">About Me</h5>
+        <div class="card-body">
+          I just like to read, code, and write. At least... that's how I present myself. I find it difficult to talk to
+          people <span id="irl_full_form" style="text-decoration: none; border-bottom: 1px dotted #000">irl</span>
+          so I write on the internet to let out my thoughts.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+{% endblock %}
+{% block javascript %}
+<script>
+  $('#irl_full_form').popover({
+      html: true,
+      trigger: 'hover',
+      placement: 'top',
+      content: '<b>I</b>n <b>R</b>eal <b>L</b>ife, for the elderly.',
+  });
+</script>
+{% endblock %}

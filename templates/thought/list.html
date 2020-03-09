@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block thoughts_active %}active{% endblock %}
+{% block body %}
+  <div class="album py-5 bg-light">
+    <div class="container">
+      <div class="alert alert-success alert-dismissible fade show" id="genericThoughtAlert"
+           style="display: none" role="alert">
+        <span id="thoughtAlertMessage"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <h2>Thoughts
+        {% if request.user.is_authenticated %}
+          <button data-toggle="modal" data-target="#thinkModal" class="btn btn-success">
+            <i class="fas fa-plus"></i>
+          </button>
+        {% endif %}
+      </h2>
+      <h5 class="text-muted">Yeah, I think too. Sometimes.</h5>
+      <br>
+      <div class="row" id="thoughts">
+        {% for thought in thoughts %}
+          <div class="col-md-4" id="thought{{ thought.pk }}">
+            <div class="card mb-4 shadow-lg">
+              <div class="card-body">
+                <p class="card-text">{{ thought.body }}</p>
+              </div>
+              <div class="card-footer text-center">
+                <p class="card-text float-left">{{ thought.timestamp | date }} at {{ thought.timestamp | time }}</p>
+                {% if request.user.is_superuser %}
+                  <button id="delete{{ thought.pk }}" class="btn btn-outline-danger btn-sm float-right deleteButton">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="container">
+            <h4>No opinions for you yet. So shoo.</h4>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="thinkModal" tabindex="1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Think Out Loud</h4>
+          <button class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          {% if request.user.is_superuser %}
+            <form class="form-group" action="{% url 'thoughts:create' %}" id="thinkForm">
+              {% csrf_token %}
+              <textarea name="body" class="form-control" style="padding-bottom: 0;margin: 2px 2px 0;"
+                        id="body" rows="5" placeholder="What are you thinking about?"></textarea>
+            </form>
+          {% else %}
+            <h4 class="text-danger">You're not allowed here. Go start your own blog.</h4>
+          {% endif %}
+        </div>
+        <div class="modal-footer" style="padding: 10px;">
+          <button id="thinkButton" style="margin-right: 10px" class="btn btn-success">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block javascript %}
+  <script src="{% static 'vendor/fontawesome/fontawesome.js' %}"></script>
+  <script src="{% static 'js/thoughtAJAX.js' %}"></script>
+{% endblock %}
